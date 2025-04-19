@@ -1,32 +1,9 @@
-// Monster.ts - Base monster class and monster types
+import { MonsterData, Buff } from '@/types/game';
 
-// Define interfaces for monster data and related types
-interface MonsterData {
-  id: string;
-  name: string;
-  level?: number;
-  hp?: number;
-  attack?: number;
-  defence?: number;
-  protection?: number;
-  crit?: number;
-  crit_mul?: number;
-  exp?: number;
-  money?: number;
-  dropRate?: number;
-  petDropRate?: number;
-  title?: string | null;
-  skills?: any[];
-  imageUrl?: string | null;
-}
-
-interface Buff {
-  name: string;
-  duration: number;
-  effect?: (monster: Monster) => void;
-}
-
-// Base monster class
+/**
+ * Monster class
+ * Represents monsters that the player battles against
+ */
 class Monster {
   id: string;
   name: string;
@@ -43,9 +20,13 @@ class Monster {
   petDropRate: number;
   title: string | null;
   buffs: Buff[];
-  skills: any[];
+  skills: string[];
   imageUrl: string | null;
 
+  /**
+   * Create a new Monster
+   * @param data - Monster data to initialize with
+   */
   constructor(data: MonsterData) {
     this.id = data.id;
     this.name = data.name;
@@ -66,22 +47,34 @@ class Monster {
     this.imageUrl = data.imageUrl || null;
   }
 
-  // Check if monster has a specific buff
+  /**
+   * Check if monster has a specific buff
+   * @param buffName - Name of the buff to check for
+   * @returns Whether the monster has the buff
+   */
   hasBuff(buffName: string): boolean {
     return this.buffs.some(buff => buff.name === buffName);
   }
 
-  // Add a buff to the monster
+  /**
+   * Add a buff to the monster
+   * @param buff - The buff to add
+   */
   addBuff(buff: Buff): void {
     this.buffs.push(buff);
   }
 
-  // Remove a buff from the monster
+  /**
+   * Remove a buff from the monster
+   * @param buffName - Name of the buff to remove
+   */
   removeBuff(buffName: string): void {
     this.buffs = this.buffs.filter(buff => buff.name !== buffName);
   }
 
-  // Process all active buffs
+  /**
+   * Process all active buffs
+   */
   processBuff(): void {
     this.buffs.forEach(buff => {
       buff.duration--;
@@ -93,7 +86,10 @@ class Monster {
     this.buffs = this.buffs.filter(buff => buff.duration > 0);
   }
 
-  // Calculate combat power (CP) for monster difficulty scaling
+  /**
+   * Calculate combat power (CP) for monster difficulty scaling
+   * @returns The monster's combat power
+   */
   get combatPower(): number {
     return this.attack + this.defence + this.hp / 10;
   }

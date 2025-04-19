@@ -1,28 +1,15 @@
-// Battle.ts - Battle system implementation
+// src/engine/battle/Battle.ts
+import { BattleState, SkillResult } from '@/types/game';
+import Monster from '@/engine/monsters/Monster';
+import { getRandomMonster, getBoss } from '@/engine/monsters/MonsterData';
+import { getSkillById } from '@/engine/skills/SkillData';
+import Player from '@/engine/Player';
+import Pet from '@/engine/pets/Pet';
 
-import Monster from './monsters/Monster';
-import { getRandomMonster, getBoss } from './monsters/MonsterData';
-import { getSkillById } from './skills/SkillData';
-import Player from './Player';
-import Pet from './pets/Pet';
-
-// Define interfaces for battle data and related types
-interface BattleState {
-  player: Player;
-  pet: Pet | null;
-  monster: Monster | null;
-  turn: number;
-  battleLog: string[];
-  isActive: boolean;
-  isBossBattle: boolean;
-}
-
-interface SkillResult {
-  success: boolean;
-  message?: string;
-  [key: string]: unknown;
-}
-
+/**
+ * Battle system implementation
+ * Handles combat between player, pet, and monsters
+ */
 class Battle {
   player: Player;
   pet: Pet | null;
@@ -32,6 +19,11 @@ class Battle {
   isActive: boolean;
   isBossBattle: boolean;
 
+  /**
+   * Create a new Battle instance
+   * @param player - The player participating in the battle
+   * @param pet - The player's pet (if any)
+   */
   constructor(player: Player, pet: Pet | null = null) {
     this.player = player;
     this.pet = pet;
@@ -42,7 +34,12 @@ class Battle {
     this.isBossBattle = false;
   }
 
-  // Start a new battle
+  /**
+   * Start a new battle
+   * @param level - Level to scale the monster to (defaults to 1)
+   * @param isBossBattle - Whether this is a boss battle (defaults to false)
+   * @returns The monster for the battle
+   */
   startBattle(level: number = 1, isBossBattle: boolean = false): Monster {
     this.isActive = true;
     this.isBossBattle = isBossBattle;
@@ -68,7 +65,11 @@ class Battle {
     return this.monster;
   }
 
-  // End the current battle
+  /**
+   * End the current battle
+   * @param playerWon - Whether the player won the battle
+   * @returns Whether the player won
+   */
   endBattle(playerWon: boolean): boolean {
     this.isActive = false;
 
@@ -108,7 +109,10 @@ class Battle {
     return playerWon;
   }
 
-  // Process a turn
+  /**
+   * Process a turn in the battle
+   * @returns Whether the battle is continuing
+   */
   processTurn(): boolean {
     if (!this.isActive || !this.monster) return false;
 
@@ -142,10 +146,11 @@ class Battle {
     return true;
   }
 
-  // Player's turn
+  /**
+   * Handle the player's turn
+   */
   playerTurn(): void {
-    // In a real implementation, this would be triggered by player input
-    // For now, we'll just do a basic attack
+    // Basic attack
     this.playerAttack();
 
     // If pet exists, it also attacks
@@ -154,7 +159,9 @@ class Battle {
     }
   }
 
-  // Monster's turn
+  /**
+   * Handle the monster's turn
+   */
   monsterTurn(): void {
     if (!this.monster) return;
 
@@ -189,7 +196,9 @@ class Battle {
     }
   }
 
-  // Player basic attack
+  /**
+   * Execute player's basic attack
+   */
   playerAttack(): void {
     if (!this.monster) return;
 
@@ -212,7 +221,9 @@ class Battle {
     }
   }
 
-  // Pet basic attack
+  /**
+   * Execute pet's basic attack
+   */
   petAttack(): void {
     if (!this.pet || !this.monster) return;
 
@@ -226,7 +237,9 @@ class Battle {
     this.addToBattleLog(`Your pet attacks for ${damage} damage.`);
   }
 
-  // Monster basic attack
+  /**
+   * Execute monster's basic attack
+   */
   monsterAttack(): void {
     if (!this.monster) return;
 
@@ -264,7 +277,12 @@ class Battle {
     }
   }
 
-  // Use a skill
+  /**
+   * Use a skill
+   * @param skillId - The ID of the skill to use
+   * @param target - The target of the skill (defaults to the monster)
+   * @returns Whether the skill was used successfully
+   */
   useSkill(skillId: string, target: Monster | Player | Pet = this.monster): boolean {
     const skill = getSkillById(skillId);
 
@@ -289,7 +307,11 @@ class Battle {
     }
   }
 
-  // Add a message to the battle log
+  /**
+   * Add a message to the battle log
+   * @param message - The message to add
+   * @returns The added message
+   */
   addToBattleLog(message: string): string {
     this.battleLog.push(message);
 
@@ -301,7 +323,10 @@ class Battle {
     return message;
   }
 
-  // Get the current battle state
+  /**
+   * Get the current battle state
+   * @returns The current battle state
+   */
   getBattleState(): BattleState {
     return {
       player: this.player,

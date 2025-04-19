@@ -30,14 +30,14 @@ const StatBar: React.FC<{
         <span>{label}</span>
         <span>{current}/{max}</span>
       </div>
-      <Progress 
-        value={percentage} 
-        className="h-3" 
-        style={{ 
+      <Progress
+        value={percentage}
+        className="h-3"
+        style={{
           backgroundColor: 'rgb(221, 221, 221)',
         }}
       >
-        <div 
+        <div
           className="h-full transition-all duration-300 ease-in-out"
           style={{ backgroundColor: color }}
         />
@@ -77,6 +77,7 @@ const MainScene: React.FC = () => {
 
   // Handle manual attack
   const handleAttack = (): void => {
+    debugger;
     if (state.battle && state.battle.isActive && state.battle.turn > 0) {
       actions.processBattleTurn();
     }

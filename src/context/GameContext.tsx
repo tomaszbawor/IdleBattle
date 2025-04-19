@@ -1,37 +1,26 @@
+// src/context/GameContext.tsx
+import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import {
+  GameState,
+  GameContextType,
+  GameActions,
+  PlayerData,
+  MonsterData,
+  PetData,
+  MapData,
+  Item,
+  ItemRarity
+} from '@/types/game';
+
 import Battle from '@/engine/Battle';
 import Monster from '@/engine/monsters/Monster';
 import Pet from '@/engine/pets/Pet';
 import Player from '@/engine/Player';
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import {getRandomPet} from "@/engine/pets/PetData.ts";
-import {getRandomMonster} from "@/engine/monsters/MonsterData.ts";
-import {getRandomItem} from "@/engine/items/ItemData.ts";
+import { getRandomPet } from "@/engine/pets/PetData";
+import { getRandomMonster } from "@/engine/monsters/MonsterData";
+import { getRandomItem } from "@/engine/items/ItemData";
 
-// Define types for state
-interface GameState {
-  player: Player | null;
-  monster: Monster | null;
-  pet: Pet | null;
-  map: any | null;
-  battle: Battle | null;
-  inventory: any[];
-  money: number;
-  sound: {
-    enabled: boolean;
-    volume: number;
-  };
-  toggles: {
-    battle: boolean;
-    battleIntro: boolean;
-    money: boolean;
-    exp: boolean;
-    item: boolean;
-    other: boolean;
-  };
-  currentSlot?: number;
-}
-
-// Define types for actions
+// Define action types
 enum ActionType {
   SET_PLAYER = 'SET_PLAYER',
   UPDATE_PLAYER = 'UPDATE_PLAYER',
@@ -48,7 +37,7 @@ enum ActionType {
   LOAD_GAME = 'LOAD_GAME'
 }
 
-// Define types for action payloads
+// Define action interfaces
 interface SetPlayerAction {
   type: ActionType.SET_PLAYER;
   payload: Player;
@@ -71,17 +60,17 @@ interface SetPetAction {
 
 interface SetMapAction {
   type: ActionType.SET_MAP;
-  payload: any;
+  payload: MapData;
 }
 
 interface SetBattleAction {
   type: ActionType.SET_BATTLE;
-  payload: Battle;
+  payload: Battle | null;
 }
 
 interface AddItemAction {
   type: ActionType.ADD_ITEM;
-  payload: any;
+  payload: Item;
 }
 
 interface RemoveItemAction {
@@ -135,34 +124,6 @@ type GameAction =
   | SaveGameAction
   | LoadGameAction;
 
-// Define types for context
-interface GameContextType {
-  state: GameState;
-  actions: {
-    setPlayer: (playerData: any) => void;
-    updatePlayer: (updates: Partial<Player>) => void;
-    setMonster: (monsterData: any) => void;
-    setPet: (petData: any) => void;
-    setMap: (map: any) => void;
-    setBattle: (battleData: { level?: number; isBossBattle?: boolean } | null) => void;
-    startBattle: (level?: number, isBossBattle?: boolean) => void;
-    processBattleTurn: () => void;
-    useSkill: (skillId: string) => void;
-    addItem: (item: any) => void;
-    removeItem: (itemId: string) => void;
-    equipItem: (item: any) => void;
-    unequipItem: (slot: string) => void;
-    updateMoney: (amount: number) => void;
-    toggleSound: () => void;
-    setToggle: (name: string, value: boolean) => void;
-    saveGame: (slot: number) => void;
-    loadGame: (slot: number) => void;
-    getRandomMonster: (level?: number) => any;
-    getRandomPet: () => any;
-    getRandomItem: (level?: number, rarity?: string | null) => any;
-  };
-}
-
 // Initial state
 const initialState: GameState = {
   player: null,
@@ -186,34 +147,52 @@ const initialState: GameState = {
   }
 };
 
-// Reducer
+/**
+ * Game state reducer
+ * Handles all game state updates
+ */
 const gameReducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
     case ActionType.SET_PLAYER:
       return { ...state, player: action.payload };
+
     case ActionType.UPDATE_PLAYER:
       if (state.player) {
         const updatedPlayerData = { ...state.player, ...action.payload };
         return { ...state, player: new Player(updatedPlayerData) };
       }
       return state;
+
     case ActionType.SET_MONSTER:
       return { ...state, monster: action.payload };
+
     case ActionType.SET_PET:
       return { ...state, pet: action.payload };
+
     case ActionType.SET_MAP:
       return { ...state, map: action.payload };
+
     case ActionType.SET_BATTLE:
       return { ...state, battle: action.payload };
+
     case ActionType.ADD_ITEM:
-      return { ...state, inventory: [...state.inventory, action.payload] };
+      return {
+        ...state,
+        inventory: [...state.inventory, action.payload]
+      };
+
     case ActionType.REMOVE_ITEM:
       return {
         ...state,
         inventory: state.inventory.filter(item => item.id !== action.payload)
       };
+
     case ActionType.UPDATE_MONEY:
-      return { ...state, money: state.money + action.payload };
+      return {
+        ...state,
+        money: state.money + action.payload
+      };
+
     case ActionType.TOGGLE_SOUND:
       return {
         ...state,
@@ -222,6 +201,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
           enabled: !state.sound.enabled
         }
       };
+
     case ActionType.SET_TOGGLE:
       return {
         ...state,
@@ -230,6 +210,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
           [action.payload.name]: action.payload.value
         }
       };
+
     case ActionType.SAVE_GAME: {
       const playerData = state.player ? state.player.save() : null;
       const petData = state.pet ? state.pet.save() : null;
@@ -247,6 +228,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
         currentSlot: action.payload.slot
       };
     }
+
     case ActionType.LOAD_GAME: {
       // Load game from localStorage
       const savedGameStr = localStorage.getItem(`slot${action.payload.slot}`);
@@ -261,54 +243,72 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
           player,
           pet,
           inventory: savedGame.inventory || [],
-          money: savedGame.money || 0
+          money: savedGame.money || 0,
+          currentSlot: action.payload.slot
         };
       }
       return state;
     }
+
     default:
       return state;
   }
 };
 
-// Create context
+// Create the GameContext
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-// Provider component props
+// Provider props interface
 interface GameProviderProps {
   children: ReactNode;
 }
 
-// Provider component
+/**
+ * GameProvider component
+ * Provides game state and actions to all child components
+ */
 export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
-  // Actions
-  const actions = {
-    setPlayer: (playerData: any) => {
+  // Define all actions
+  const actions: GameActions = {
+    setPlayer: (playerData: PlayerData) => {
       const player = new Player(playerData);
       dispatch({ type: ActionType.SET_PLAYER, payload: player });
     },
-    updatePlayer: (updates: Partial<Player>) => dispatch({ type: ActionType.UPDATE_PLAYER, payload: updates }),
-    setMonster: (monsterData: any) => {
+
+    updatePlayer: (updates: Partial<PlayerData>) => {
+      dispatch({ type: ActionType.UPDATE_PLAYER, payload: updates });
+    },
+
+    setMonster: (monsterData: MonsterData) => {
       const monster = new Monster(monsterData);
       dispatch({ type: ActionType.SET_MONSTER, payload: monster });
     },
-    setPet: (petData: any) => {
+
+    setPet: (petData: PetData) => {
       const pet = new Pet(petData);
       dispatch({ type: ActionType.SET_PET, payload: pet });
     },
-    setMap: (map: any) => dispatch({ type: ActionType.SET_MAP, payload: map }),
+
+    setMap: (map: MapData) => {
+      dispatch({ type: ActionType.SET_MAP, payload: map });
+    },
+
     setBattle: (battleData: { level?: number; isBossBattle?: boolean } | null) => {
       if (!state.player) return;
 
-      const battle = new Battle(state.player, state.pet);
-      if (battleData) {
-        const monster = battle.startBattle(battleData.level || 1, battleData.isBossBattle || false);
-        dispatch({ type: ActionType.SET_MONSTER, payload: monster });
+      if (!battleData) {
+        dispatch({ type: ActionType.SET_BATTLE, payload: null });
+        return;
       }
+
+      const battle = new Battle(state.player, state.pet);
+      const monster = battle.startBattle(battleData.level || 1, battleData.isBossBattle || false);
+      dispatch({ type: ActionType.SET_MONSTER, payload: monster });
       dispatch({ type: ActionType.SET_BATTLE, payload: battle });
     },
+
     startBattle: (level = 1, isBossBattle = false) => {
       if (!state.player) return;
 
@@ -317,19 +317,24 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       dispatch({ type: ActionType.SET_MONSTER, payload: monster });
       dispatch({ type: ActionType.SET_BATTLE, payload: battle });
     },
+
     processBattleTurn: () => {
       if (state.battle) {
         state.battle.processTurn();
-        dispatch({ type: ActionType.SET_BATTLE, payload: state.battle });
+        // Force a re-render by creating a new battle object with the updated state
+        dispatch({ type: ActionType.SET_BATTLE, payload: { ...state.battle } });
       }
     },
+
     useSkill: (skillId: string) => {
       if (state.battle) {
         state.battle.useSkill(skillId);
-        dispatch({ type: ActionType.SET_BATTLE, payload: state.battle });
+        // Force a re-render by creating a new battle object with the updated state
+        dispatch({ type: ActionType.SET_BATTLE, payload: { ...state.battle } });
       }
     },
-    addItem: (item: any) => {
+
+    addItem: (item: Item) => {
       if (state.player) {
         // Create a new Player instance with the added item
         const updatedPlayer = new Player(state.player);
@@ -338,6 +343,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       }
       dispatch({ type: ActionType.ADD_ITEM, payload: item });
     },
+
     removeItem: (itemId: string) => {
       if (state.player) {
         // Create a new Player instance with the item removed
@@ -347,22 +353,23 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       }
       dispatch({ type: ActionType.REMOVE_ITEM, payload: itemId });
     },
-    equipItem: (item: any) => {
+
+    equipItem: (item: Item) => {
       if (state.player) {
-        state.player.equip(item);
-        // Create a new Player instance to ensure methods are preserved
         const updatedPlayer = new Player(state.player);
+        updatedPlayer.equip(item);
         dispatch({ type: ActionType.SET_PLAYER, payload: updatedPlayer });
       }
     },
+
     unequipItem: (slot: string) => {
       if (state.player) {
-        state.player.unequip(slot);
-        // Create a new Player instance to ensure methods are preserved
         const updatedPlayer = new Player(state.player);
+        updatedPlayer.unequip(slot);
         dispatch({ type: ActionType.SET_PLAYER, payload: updatedPlayer });
       }
     },
+
     updateMoney: (amount: number) => {
       if (state.player) {
         // Create a new Player instance with updated money
@@ -372,16 +379,37 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       }
       dispatch({ type: ActionType.UPDATE_MONEY, payload: amount });
     },
-    toggleSound: () => dispatch({ type: ActionType.TOGGLE_SOUND }),
-    setToggle: (name: string, value: boolean) => dispatch({
-      type: ActionType.SET_TOGGLE,
-      payload: { name, value }
-    }),
-    saveGame: (slot: number) => dispatch({ type: ActionType.SAVE_GAME, payload: { slot } }),
-    loadGame: (slot: number) => dispatch({ type: ActionType.LOAD_GAME, payload: { slot } }),
-    getRandomMonster: (level = 1) => getRandomMonster(level),
-    getRandomPet: () => getRandomPet(),
-    getRandomItem: (level = 1, rarity = null) => getRandomItem(level, rarity)
+
+    toggleSound: () => {
+      dispatch({ type: ActionType.TOGGLE_SOUND });
+    },
+
+    setToggle: (name: string, value: boolean) => {
+      dispatch({
+        type: ActionType.SET_TOGGLE,
+        payload: { name, value }
+      });
+    },
+
+    saveGame: (slot: number) => {
+      dispatch({ type: ActionType.SAVE_GAME, payload: { slot } });
+    },
+
+    loadGame: (slot: number) => {
+      dispatch({ type: ActionType.LOAD_GAME, payload: { slot } });
+    },
+
+    getRandomMonster: (level = 1) => {
+      return getRandomMonster(level);
+    },
+
+    getRandomPet: () => {
+      return getRandomPet();
+    },
+
+    getRandomItem: (level = 1, rarity: ItemRarity | null = null) => {
+      return getRandomItem(level, rarity);
+    }
   };
 
   return (
@@ -391,8 +419,11 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   );
 };
 
-// Custom hook to use the game context
-// eslint-disable-next-line react-refresh/only-export-components
+/**
+ * Custom hook to use the game context
+ * @returns The game context with state and actions
+ * @throws Error if used outside of a GameProvider
+ */
 export const useGame = (): GameContextType => {
   const context = useContext(GameContext);
   if (context === undefined) {

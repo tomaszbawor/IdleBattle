@@ -1,50 +1,19 @@
-// Item.ts - Item implementation
-import { Character } from '../skills/Skill';
+// src/engine/items/Item.ts
+import {
+  ItemData,
+  ItemType,
+  ItemRarity,
+  EquipmentSlotType,
+  ItemStats,
+  ItemEffect,
+  ItemEffectResult,
+  UseResult
+} from '@/types/game';
 
-// Define types for item properties
-export type ItemType = 'weapon' | 'armor' | 'helmet' | 'boots' | 'accessory' | 'consumable';
-export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
-export type EquipmentSlotType = 'weapon' | 'armor' | 'helmet' | 'boots' | 'accessory1' | 'accessory2';
-
-// Define interfaces for item data
-export interface ItemStats {
-  [key: string]: number;
-}
-
-export interface ItemEffectResult {
-  success: boolean;
-  message: string;
-  value?: number;
-  stat?: string;
-}
-
-export interface ItemEffect {
-  description: string;
-  onUse?: (target: Character) => ItemEffectResult;
-  [key: string]: unknown;
-}
-
-export interface ItemData {
-  id: string;
-  name: string;
-  description?: string;
-  type: ItemType;
-  slot: EquipmentSlotType;
-  rarity?: ItemRarity;
-  level?: number;
-  value?: number;
-  stats?: ItemStats;
-  effects?: ItemEffect[];
-  imageUrl?: string | null;
-}
-
-export interface UseResult {
-  success: boolean;
-  message: string;
-  results?: ItemEffectResult[];
-}
-
-// Item class
+/**
+ * Item class
+ * Represents items that can be equipped, used, or stored in inventory
+ */
 class Item {
   id: string;
   name: string;
@@ -59,6 +28,10 @@ class Item {
   imageUrl: string | null;
   isEquipped: boolean;
 
+  /**
+   * Create a new Item
+   * @param data - Item data to initialize with
+   */
   constructor(data: ItemData) {
     this.id = data.id;
     this.name = data.name;
@@ -74,7 +47,10 @@ class Item {
     this.isEquipped = false;
   }
 
-  // Get item value based on rarity and level
+  /**
+   * Get item value based on rarity and level
+   * @returns The calculated item value
+   */
   getValue(): number {
     const rarityMultiplier: Record<ItemRarity, number> = {
       common: 1,
@@ -87,7 +63,10 @@ class Item {
     return this.value * (this.level || 1) * (rarityMultiplier[this.rarity] || 1);
   }
 
-  // Get item color based on rarity
+  /**
+   * Get item color based on rarity
+   * @returns The hex color code for the item's rarity
+   */
   getColor(): string {
     const rarityColors: Record<ItemRarity, string> = {
       common: '#FFFFFF', // White
@@ -100,12 +79,18 @@ class Item {
     return rarityColors[this.rarity] || rarityColors.common;
   }
 
-  // Get item display name with rarity color
+  /**
+   * Get item display name with rarity color
+   * @returns HTML-formatted item name with color
+   */
   getDisplayName(): string {
     return `<span style="color: ${this.getColor()}">${this.name}</span>`;
   }
 
-  // Get item tooltip
+  /**
+   * Get item tooltip
+   * @returns HTML-formatted tooltip for the item
+   */
   getTooltip(): string {
     let tooltip = `<div style="color: ${this.getColor()}">${this.name}</div>`;
     tooltip += `<div>${this.type} - ${this.rarity}</div>`;
@@ -131,8 +116,12 @@ class Item {
     return tooltip;
   }
 
-  // Use the item (for consumables)
-  use(target: Character): UseResult {
+  /**
+   * Use the item (for consumables)
+   * @param target - The target to use the item on
+   * @returns The result of using the item
+   */
+  use(target: any): UseResult {
     if (this.type !== 'consumable') {
       return { success: false, message: 'This item cannot be used.' };
     }
@@ -154,7 +143,10 @@ class Item {
     };
   }
 
-  // Clone the item
+  /**
+   * Clone the item
+   * @returns A new instance of the item with the same properties
+   */
   clone(): Item {
     return new Item({
       id: this.id,
