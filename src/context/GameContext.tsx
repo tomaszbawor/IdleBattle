@@ -2,7 +2,7 @@ import Battle from '@/engine/Battle';
 import Monster from '@/engine/monsters/Monster';
 import Pet from '@/engine/pets/Pet';
 import Player from '@/engine/Player';
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import {getRandomPet} from "@/engine/pets/PetData.ts";
 import {getRandomMonster} from "@/engine/monsters/MonsterData.ts";
 import {getRandomItem} from "@/engine/items/ItemData.ts";
@@ -192,7 +192,11 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
     case ActionType.SET_PLAYER:
       return { ...state, player: action.payload };
     case ActionType.UPDATE_PLAYER:
-      return { ...state, player: { ...state.player, ...action.payload } as Player };
+      if (state.player) {
+        const updatedPlayerData = { ...state.player, ...action.payload };
+        return { ...state, player: new Player(updatedPlayerData) };
+      }
+      return state;
     case ActionType.SET_MONSTER:
       return { ...state, monster: action.payload };
     case ActionType.SET_PET:
@@ -227,18 +231,21 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
         }
       };
     case ActionType.SAVE_GAME: {
-      //TODO: Save game to localStorage
-      //const playerData = state.player ? state.player.save() : null;
-      // const petData = state.pet ? state.pet.save() : null;
-      //
-      // localStorage.setItem(`slot${action.payload.slot}`, JSON.stringify({
-      //   player: playerData,
-      //   pet: petData,
-      //   inventory: state.inventory,
-      //   money: state.money,
-      //   time: new Date().toLocaleString()
-      // }));
-      return state;
+      const playerData = state.player ? state.player.save() : null;
+      const petData = state.pet ? state.pet.save() : null;
+
+      localStorage.setItem(`slot${action.payload.slot}`, JSON.stringify({
+        player: playerData,
+        pet: petData,
+        inventory: state.inventory,
+        money: state.money,
+        time: new Date().toLocaleString()
+      }));
+
+      return {
+        ...state,
+        currentSlot: action.payload.slot
+      };
     }
     case ActionType.LOAD_GAME: {
       // Load game from localStorage
@@ -293,15 +300,21 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     },
     setMap: (map: any) => dispatch({ type: ActionType.SET_MAP, payload: map }),
     setBattle: (battleData: { level?: number; isBossBattle?: boolean } | null) => {
+      if (!state.player) return;
+
       const battle = new Battle(state.player, state.pet);
       if (battleData) {
-        battle.startBattle(battleData.level || 1, battleData.isBossBattle || false);
+        const monster = battle.startBattle(battleData.level || 1, battleData.isBossBattle || false);
+        dispatch({ type: ActionType.SET_MONSTER, payload: monster });
       }
       dispatch({ type: ActionType.SET_BATTLE, payload: battle });
     },
     startBattle: (level = 1, isBossBattle = false) => {
+      if (!state.player) return;
+
       const battle = new Battle(state.player, state.pet);
-      battle.startBattle(level, isBossBattle);
+      const monster = battle.startBattle(level, isBossBattle);
+      dispatch({ type: ActionType.SET_MONSTER, payload: monster });
       dispatch({ type: ActionType.SET_BATTLE, payload: battle });
     },
     processBattleTurn: () => {
@@ -318,31 +331,44 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     },
     addItem: (item: any) => {
       if (state.player) {
-        state.player.addItem(item);
+        // Create a new Player instance with the added item
+        const updatedPlayer = new Player(state.player);
+        updatedPlayer.addItem(item);
+        dispatch({ type: ActionType.SET_PLAYER, payload: updatedPlayer });
       }
       dispatch({ type: ActionType.ADD_ITEM, payload: item });
     },
     removeItem: (itemId: string) => {
       if (state.player) {
-        state.player.removeItem(itemId);
+        // Create a new Player instance with the item removed
+        const updatedPlayer = new Player(state.player);
+        updatedPlayer.removeItem(itemId);
+        dispatch({ type: ActionType.SET_PLAYER, payload: updatedPlayer });
       }
       dispatch({ type: ActionType.REMOVE_ITEM, payload: itemId });
     },
     equipItem: (item: any) => {
       if (state.player) {
         state.player.equip(item);
-        dispatch({ type: ActionType.UPDATE_PLAYER, payload: state.player });
+        // Create a new Player instance to ensure methods are preserved
+        const updatedPlayer = new Player(state.player);
+        dispatch({ type: ActionType.SET_PLAYER, payload: updatedPlayer });
       }
     },
     unequipItem: (slot: string) => {
       if (state.player) {
         state.player.unequip(slot);
-        dispatch({ type: ActionType.UPDATE_PLAYER, payload: state.player });
+        // Create a new Player instance to ensure methods are preserved
+        const updatedPlayer = new Player(state.player);
+        dispatch({ type: ActionType.SET_PLAYER, payload: updatedPlayer });
       }
     },
     updateMoney: (amount: number) => {
       if (state.player) {
-        state.player.money += amount;
+        // Create a new Player instance with updated money
+        const updatedPlayer = new Player(state.player);
+        updatedPlayer.money += amount;
+        dispatch({ type: ActionType.SET_PLAYER, payload: updatedPlayer });
       }
       dispatch({ type: ActionType.UPDATE_MONEY, payload: amount });
     },

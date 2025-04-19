@@ -37,16 +37,28 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
     }
   }, [slotNumber]);
 
-  const handleInputChange = (): void => {
-    if (password === '' || confirmPassword === '' || name === '') {
+  const handleInputChange = (newName: string, newPassword: string, newConfirmPassword: string): void => {
+    if (newPassword === '' || newConfirmPassword === '' || newName === '') {
       setShowNewButton(false);
       setWarning('Please fill the blank');
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (newName.trim().length < 3) {
+      setShowNewButton(false);
+      setWarning('Name must be at least 3 characters');
+      return;
+    }
+
+    if (newPassword !== newConfirmPassword) {
       setShowNewButton(false);
       setWarning('Password is not same');
+      return;
+    }
+
+    if (newPassword.length < 4) {
+      setShowNewButton(false);
+      setWarning('Password must be at least 4 characters');
       return;
     }
 
@@ -121,9 +133,10 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
           type="text" 
           value={name} 
           onChange={(e) => {
-            setName(e.target.value);
-            handleInputChange();
-          }} 
+            const newName = e.target.value;
+            setName(newName);
+            handleInputChange(newName, password, confirmPassword);
+          }}
           className="border border-slate-300 rounded px-2 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
           placeholder="Enter character name"
         />
@@ -134,9 +147,10 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
           type="password" 
           value={password} 
           onChange={(e) => {
-            setPassword(e.target.value);
-            handleInputChange();
-          }} 
+            const newPassword = e.target.value;
+            setPassword(newPassword);
+            handleInputChange(name, newPassword, confirmPassword);
+          }}
           className="border border-slate-300 rounded px-2 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
           placeholder="Enter password"
         />
@@ -147,9 +161,10 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
           type="password" 
           value={confirmPassword} 
           onChange={(e) => {
-            setConfirmPassword(e.target.value);
-            handleInputChange();
-          }} 
+            const newConfirmPassword = e.target.value;
+            setConfirmPassword(newConfirmPassword);
+            handleInputChange(name, password, newConfirmPassword);
+          }}
           className="border border-slate-300 rounded px-2 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
           placeholder="Confirm password"
         />
