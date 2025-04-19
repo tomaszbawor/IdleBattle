@@ -147,10 +147,10 @@ class Item {
       }
     }
 
-    return { 
-      success: true, 
-      message: `Used ${this.name}.`, 
-      results 
+    return {
+      success: true,
+      message: `Used ${this.name}.`,
+      results
     };
   }
 

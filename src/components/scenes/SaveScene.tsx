@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import FlickerButton from '../ui/FlickerButton';
 import { Button } from '../ui/button';
 import { useGame } from '../../context/GameContext';
 
@@ -87,7 +86,13 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
           <span>Saved: {slotData.time}</span>
         </div>
         <div className="absolute right-2.5 top-2.5">
-          <FlickerButton text="LOAD" onClick={handleLoadGame} width={100} height={40} />
+          <Button 
+            variant="flicker" 
+            onClick={handleLoadGame} 
+            className="w-[100px] h-[40px]"
+          >
+            LOAD
+          </Button>
         </div>
         <div className="absolute right-2.5 bottom-2.5">
           <Button 
@@ -148,7 +153,13 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
       </div>
       <div className="absolute right-2.5 top-2.5">
         {showNewButton && (
-          <FlickerButton text="NEW" onClick={handleNewGame} width={100} height={50} />
+          <Button 
+            variant="flicker" 
+            onClick={handleNewGame} 
+            className="w-[100px] h-[50px]"
+          >
+            NEW
+          </Button>
         )}
       </div>
       <div className="absolute right-2.5 bottom-2.5">

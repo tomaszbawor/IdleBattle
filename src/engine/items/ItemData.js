@@ -9,9 +9,9 @@ export const ItemEffects = {
     onUse: (target) => {
       const healAmount = 50;
       target.hp = Math.min(target.hp + healAmount, target.maxHp || target.hp);
-      return { 
-        heal: healAmount, 
-        message: `Restored ${healAmount} health.` 
+      return {
+        heal: healAmount,
+        message: `Restored ${healAmount} health.`
       };
     }
   },
@@ -21,9 +21,9 @@ export const ItemEffects = {
     onUse: (target) => {
       const manaAmount = 30;
       target.mp = Math.min(target.mp + manaAmount, target.maxMp || target.mp);
-      return { 
-        mana: manaAmount, 
-        message: `Restored ${manaAmount} mana.` 
+      return {
+        mana: manaAmount,
+        message: `Restored ${manaAmount} mana.`
       };
     }
   },
@@ -45,8 +45,8 @@ export const ItemEffects = {
       if (typeof target.addBuff === 'function') {
         target.addBuff(buff);
       }
-      return { 
-        message: 'Strength increased for 3 turns.' 
+      return {
+        message: 'Strength increased for 3 turns.'
       };
     }
   }

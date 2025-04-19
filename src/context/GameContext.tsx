@@ -3,6 +3,9 @@ import Monster from '@/engine/monsters/Monster';
 import Pet from '@/engine/pets/Pet';
 import Player from '@/engine/Player';
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import {getRandomPet} from "@/engine/pets/PetData.ts";
+import {getRandomMonster} from "@/engine/monsters/MonsterData.ts";
+import {getRandomItem} from "@/engine/items/ItemData.ts";
 
 // Define types for state
 interface GameState {
@@ -224,17 +227,17 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
         }
       };
     case ActionType.SAVE_GAME: {
-      // Save game to localStorage
-      const playerData = state.player ? state.player.save() : null;
-      const petData = state.pet ? state.pet.save() : null;
-
-      localStorage.setItem(`slot${action.payload.slot}`, JSON.stringify({
-        player: playerData,
-        pet: petData,
-        inventory: state.inventory,
-        money: state.money,
-        time: new Date().toLocaleString()
-      }));
+      //TODO: Save game to localStorage
+      //const playerData = state.player ? state.player.save() : null;
+      // const petData = state.pet ? state.pet.save() : null;
+      //
+      // localStorage.setItem(`slot${action.payload.slot}`, JSON.stringify({
+      //   player: playerData,
+      //   pet: petData,
+      //   inventory: state.inventory,
+      //   money: state.money,
+      //   time: new Date().toLocaleString()
+      // }));
       return state;
     }
     case ActionType.LOAD_GAME: {
@@ -363,6 +366,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 };
 
 // Custom hook to use the game context
+// eslint-disable-next-line react-refresh/only-export-components
 export const useGame = (): GameContextType => {
   const context = useContext(GameContext);
   if (context === undefined) {

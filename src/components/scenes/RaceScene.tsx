@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import FlickerButton from '../ui/FlickerButton';
+import { Button } from '../ui/button';
 import { useGame } from '../../context/GameContext';
 
 // Define types for stats and race data
@@ -302,7 +302,13 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
             <span style={{ fontSize: '12px' }}>(Level-up Growth: 1/4 of Age Growth)</span>
           </div>
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <FlickerButton text="OK" onClick={handleCreateCharacter} width={250} height={50} />
+            <Button 
+              variant="flicker" 
+              onClick={handleCreateCharacter} 
+              className="w-[250px] h-[50px]"
+            >
+              OK
+            </Button>
           </div>
         </div>
       )}

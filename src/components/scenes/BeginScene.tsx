@@ -1,14 +1,12 @@
 import React from 'react';
-import FlickerButton from '../ui/FlickerButton';
-import SocialButton from '../ui/SocialButton';
-import { useGame } from '../../context/GameContext';
+import { Button } from '../ui/button';
+import { Facebook, Twitter, Globe, ExternalLink } from 'lucide-react';
 
 interface BeginSceneProps {
   onPlay: () => void;
 }
 
 const BeginScene: React.FC<BeginSceneProps> = ({ onPlay }) => {
-  const { state } = useGame();
   const version = "1.6"; // Same version as in the original game
 
   return (
@@ -21,7 +19,13 @@ const BeginScene: React.FC<BeginSceneProps> = ({ onPlay }) => {
 
       {/* Play Button */}
       <div className="absolute top-[350px] left-[300px]">
-        <FlickerButton text="Play Game" onClick={onPlay} width={200} height={80} fontSize={40} />
+        <Button 
+          variant="flicker" 
+          onClick={onPlay} 
+          className="w-[200px] h-[80px] text-[40px]"
+        >
+          Play Game
+        </Button>
       </div>
 
       {/* Version */}
@@ -31,22 +35,42 @@ const BeginScene: React.FC<BeginSceneProps> = ({ onPlay }) => {
 
       {/* Social Media Buttons */}
       <div className="absolute bottom-[60px] right-[150px] flex gap-5">
-        <SocialButton
-          platform="facebook"
-          url="https://www.facebook.com/pages/Crit-Game/492086344181628"
-        />
-        <SocialButton
-          platform="twitter"
-          url="https://twitter.com/jyl111"
-        />
-        <SocialButton
-          platform="weibo"
-          url="http://www.weibo.com/2162569391/"
-        />
-        <SocialButton
-          platform="kongregate"
-          url="http://www.kongregate.com/games/CritGame/battle-without-end"
-        />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-[50px] h-[50px]"
+          onClick={() => window.open("https://www.facebook.com/pages/Crit-Game/492086344181628", "_blank")}
+          aria-label="Facebook"
+        >
+          <Facebook className="h-6 w-6" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-[50px] h-[50px]"
+          onClick={() => window.open("https://twitter.com/jyl111", "_blank")}
+          aria-label="Twitter"
+        >
+          <Twitter className="h-6 w-6" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-[50px] h-[50px]"
+          onClick={() => window.open("http://www.weibo.com/2162569391/", "_blank")}
+          aria-label="Weibo"
+        >
+          <Globe className="h-6 w-6" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-[50px] h-[50px]"
+          onClick={() => window.open("http://www.kongregate.com/games/CritGame/battle-without-end", "_blank")}
+          aria-label="Kongregate"
+        >
+          <ExternalLink className="h-6 w-6" />
+        </Button>
       </div>
     </div>
   );
