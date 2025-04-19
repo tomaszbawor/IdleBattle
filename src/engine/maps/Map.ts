@@ -65,18 +65,22 @@ class Map {
   // Calculate the average combat power of monsters in this map
   calculateAverageCp(): number {
     if (this.monsterList.length === 0) return 0;
-    
-    const totalCp = this.monsterList.reduce((sum, monster) => {
+
+    // Filter out any undefined monsters before calculating
+    const validMonsters = this.monsterList.filter(monster => monster !== undefined);
+    if (validMonsters.length === 0) return 0;
+
+    const totalCp = validMonsters.reduce((sum, monster) => {
       return sum + (monster.combatPower || 0);
     }, 0);
-    
-    return Math.floor(totalCp / this.monsterList.length);
+
+    return Math.floor(totalCp / validMonsters.length);
   }
 
   // Get a random monster from this map
   getRandomMonster(): Monster | null {
     if (this.monsterList.length === 0) return null;
-    
+
     const index = Math.floor(Math.random() * this.monsterList.length);
     return this.monsterList[index];
   }
@@ -84,12 +88,12 @@ class Map {
   // Get a boss monster from this map
   getBoss(): Monster | null {
     if (this.monsterList.length === 0) return null;
-    
+
     // In a real implementation, we might have specific boss monsters
     // For now, just return a random monster with increased stats
     const monster = this.getRandomMonster();
     if (!monster) return null;
-    
+
     // Create a boss version of the monster
     return {
       ...monster,
@@ -106,7 +110,7 @@ class Map {
   // Get a random pet from this map
   getRandomPet(): Pet | null {
     if (this.petList.length === 0) return null;
-    
+
     const index = Math.floor(Math.random() * this.petList.length);
     return this.petList[index];
   }
