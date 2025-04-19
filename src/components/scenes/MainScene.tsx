@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useGame } from '../../context/GameContext';
-import { getSkillById } from '../../data/skills/SkillData';
-import { getItemById } from '../../data/items/ItemData';
 import MapPanel from '../ui/map/MapPanel';
+import { useGame } from '@/context/GameContext';
+import { getSkillById } from '@/engine/skills/SkillData';
 
 // Define types for props and state
 interface PanelProps {
@@ -37,8 +36,8 @@ interface Item {
 // UI Components
 const Panel: React.FC<PanelProps> = ({ title, children, style }) => {
   return (
-    <div 
-      style={{ 
+    <div
+      style={{
         border: '2px solid #74748c',
         borderRadius: '5px',
         padding: '10px',
@@ -62,13 +61,13 @@ const StatBar: React.FC<StatBarProps> = ({ label, current, max, color }) => {
         <span>{current}/{max}</span>
       </div>
       <div style={{ width: '100%', height: '15px', backgroundColor: '#ddd', borderRadius: '3px', overflow: 'hidden' }}>
-        <div 
-          style={{ 
-            width: `${percentage}%`, 
-            height: '100%', 
+        <div
+          style={{
+            width: `${percentage}%`,
+            height: '100%',
             backgroundColor: color,
             transition: 'width 0.3s ease-in-out'
-          }} 
+          }}
         />
       </div>
     </div>
@@ -77,11 +76,11 @@ const StatBar: React.FC<StatBarProps> = ({ label, current, max, color }) => {
 
 const Button: React.FC<ButtonProps> = ({ text, onClick, style, disabled }) => {
   return (
-    <button 
+    <button
       className="button"
       onClick={onClick}
       disabled={disabled}
-      style={{ 
+      style={{
         padding: '5px 10px',
         margin: '5px',
         opacity: disabled ? 0.5 : 1,
@@ -160,21 +159,21 @@ const MainScene: React.FC = () => {
   return (
     <div className="scene main-scene" style={{ backgroundColor: '#c0c0c0', padding: '10px' }}>
       {/* Player Info Panel */}
-      <Panel 
-        title="Player" 
+      <Panel
+        title="Player"
         style={{ position: 'absolute', top: '10px', left: '10px', width: '380px' }}
       >
-        <StatBar 
-          label="HP" 
-          current={state.player?.hp || 0} 
-          max={state.player?.maxHp || 100} 
-          color="#ff4040" 
+        <StatBar
+          label="HP"
+          current={state.player?.hp || 0}
+          max={state.player?.maxHp || 100}
+          color="#ff4040"
         />
-        <StatBar 
-          label="MP" 
-          current={state.player?.mp || 0} 
-          max={state.player?.maxMp || 50} 
-          color="#4a60d7" 
+        <StatBar
+          label="MP"
+          current={state.player?.mp || 0}
+          max={state.player?.maxMp || 50}
+          color="#4a60d7"
         />
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
           <div>
@@ -194,17 +193,17 @@ const MainScene: React.FC = () => {
       </Panel>
 
       {/* Monster Info Panel */}
-      <Panel 
-        title="Monster" 
+      <Panel
+        title="Monster"
         style={{ position: 'absolute', top: '10px', left: '400px', width: '180px' }}
       >
         {state.battle?.monster ? (
           <>
-            <StatBar 
-              label="HP" 
-              current={state.battle.monster.hp} 
-              max={state.battle.monster.hp} 
-              color="#ff4040" 
+            <StatBar
+              label="HP"
+              current={state.battle.monster.hp}
+              max={state.battle.monster.hp}
+              color="#ff4040"
             />
             <div style={{ textAlign: 'center', marginTop: '10px' }}>
               <div>{state.battle.monster.name}</div>
@@ -217,23 +216,23 @@ const MainScene: React.FC = () => {
       </Panel>
 
       {/* Pet Info Panel */}
-      <Panel 
-        title="Pet" 
+      <Panel
+        title="Pet"
         style={{ position: 'absolute', top: '150px', left: '400px', width: '180px' }}
       >
         {state.pet ? (
           <>
-            <StatBar 
-              label="HP" 
-              current={state.pet.hp} 
-              max={state.pet.maxHp} 
-              color="#ff4040" 
+            <StatBar
+              label="HP"
+              current={state.pet.hp}
+              max={state.pet.maxHp}
+              color="#ff4040"
             />
-            <StatBar 
-              label="MP" 
-              current={state.pet.mp} 
-              max={state.pet.maxMp} 
-              color="#4a60d7" 
+            <StatBar
+              label="MP"
+              current={state.pet.mp}
+              max={state.pet.maxMp}
+              color="#4a60d7"
             />
             <div style={{ textAlign: 'center', marginTop: '10px' }}>
               <div>{state.pet.name}</div>
@@ -246,18 +245,18 @@ const MainScene: React.FC = () => {
       </Panel>
 
       {/* Battle Skills Panel */}
-      <Panel 
-        title="Battle Skills" 
+      <Panel
+        title="Battle Skills"
         style={{ position: 'absolute', top: '235px', left: '415px', width: '165px' }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Button 
-            text="Attack" 
-            onClick={handleAttack} 
+          <Button
+            text="Attack"
+            onClick={handleAttack}
             disabled={!state.battle || !state.battle.isActive || state.battle.turn < 0}
           />
           {getPlayerSkills().map(skill => (
-            <Button 
+            <Button
               key={skill.id}
               text={skill.name}
               onClick={() => handleUseSkill(skill.id)}
@@ -266,17 +265,17 @@ const MainScene: React.FC = () => {
           ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: '10px' }}>
-          <Button 
-            text={autoMode ? "Manual Mode" : "Auto Mode"} 
-            onClick={toggleAutoMode} 
+          <Button
+            text={autoMode ? "Manual Mode" : "Auto Mode"}
+            onClick={toggleAutoMode}
             style={{ backgroundColor: autoMode ? '#ff4040' : '#4a60d7' }}
           />
         </div>
       </Panel>
 
       {/* Info Panel */}
-      <Panel 
-        title="Battle Log" 
+      <Panel
+        title="Battle Log"
         style={{ position: 'absolute', top: '235px', left: '10px', width: '380px', height: '150px', overflow: 'auto' }}
       >
         <div>
@@ -287,19 +286,19 @@ const MainScene: React.FC = () => {
       </Panel>
 
       {/* Loot Panel */}
-      <Panel 
-        title="Loot" 
+      <Panel
+        title="Loot"
         style={{ position: 'absolute', top: '405px', left: '415px', width: '165px', height: '150px' }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
           {state.inventory.slice(0, 4).map((item: Item, index: number) => (
-            <div 
+            <div
               key={index}
-              style={{ 
-                width: '40px', 
-                height: '40px', 
-                margin: '5px', 
-                backgroundColor: '#ddd', 
+              style={{
+                width: '40px',
+                height: '40px',
+                margin: '5px',
+                backgroundColor: '#ddd',
                 border: '1px solid #999',
                 display: 'flex',
                 justifyContent: 'center',
@@ -314,14 +313,14 @@ const MainScene: React.FC = () => {
             </div>
           ))}
           {Array(4 - Math.min(state.inventory.length, 4)).fill(0).map((_, index) => (
-            <div 
+            <div
               key={`empty-${index}`}
-              style={{ 
-                width: '40px', 
-                height: '40px', 
-                margin: '5px', 
-                backgroundColor: '#ddd', 
-                border: '1px solid #999' 
+              style={{
+                width: '40px',
+                height: '40px',
+                margin: '5px',
+                backgroundColor: '#ddd',
+                border: '1px solid #999'
               }}
             />
           ))}
@@ -329,21 +328,19 @@ const MainScene: React.FC = () => {
       </Panel>
 
       {/* Other Panel */}
-      <Panel 
-        style={{ position: 'absolute', top: '10px', left: '590px', width: '180px' }}
-      >
+      <Panel>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Button text="Shop" onClick={() => {}} style={{ width: '100px' }} />
-          <Button text="Inventory" onClick={() => {}} style={{ width: '100px' }} />
-          <Button 
-            text="Map" 
-            style={{ width: '100px' }} 
+          <Button text="Shop" onClick={() => { }} style={{ width: '100px' }} />
+          <Button text="Inventory" onClick={() => { }} style={{ width: '100px' }} />
+          <Button
+            text="Map"
+            style={{ width: '100px' }}
             onClick={() => setShowMapPanel(true)}
           />
-          <Button text="Help" onClick={() => {}} style={{ width: '100px' }} />
-          <Button 
-            text="Save" 
-            style={{ width: '100px' }} 
+          <Button text="Help" onClick={() => { }} style={{ width: '100px' }} />
+          <Button
+            text="Save"
+            style={{ width: '100px' }}
             onClick={() => actions.saveGame(1)}
           />
         </div>

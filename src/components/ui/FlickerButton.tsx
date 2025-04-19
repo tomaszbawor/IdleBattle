@@ -9,21 +9,21 @@ interface FlickerButtonProps {
   fontSize?: number;
 }
 
-const FlickerButton: React.FC<FlickerButtonProps> = ({ 
-  text, 
-  onClick, 
-  width = 200, 
-  height = 80, 
-  fontSize = 20 
+const FlickerButton: React.FC<FlickerButtonProps> = ({
+  text,
+  onClick,
+  width = 200,
+  height = 80,
+  fontSize = 20
 }) => {
   return (
-    <Button 
+    <Button
       variant="flicker"
       onClick={onClick}
-      style={{ 
-        width: `${width}px`, 
-        height: `${height}px`, 
-        fontSize: `${fontSize}px` 
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        fontSize: `${fontSize}px`
       }}
     >
       {text}

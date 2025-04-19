@@ -118,11 +118,11 @@ const races: Races = {
 
 const RaceButton: React.FC<RaceButtonProps> = ({ race, isSelected, onClick }) => {
   return (
-    <button 
+    <button
       className={`button ${isSelected ? 'selected-button' : ''}`}
       onClick={onClick}
-      style={{ 
-        width: '200px', 
+      style={{
+        width: '200px',
         height: '50px',
         margin: '5px',
         backgroundColor: isSelected ? '#2a40b7' : '#4a60d7'
@@ -135,11 +135,11 @@ const RaceButton: React.FC<RaceButtonProps> = ({ race, isSelected, onClick }) =>
 
 const AgeButton: React.FC<AgeButtonProps> = ({ age, isSelected, onClick }) => {
   return (
-    <button 
+    <button
       className={`button ${isSelected ? 'selected-button' : ''}`}
       onClick={onClick}
-      style={{ 
-        width: '40px', 
+      style={{
+        width: '40px',
         height: '40px',
         margin: '5px',
         backgroundColor: isSelected ? '#2a40b7' : '#4a60d7'
@@ -177,14 +177,14 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
 
   const calculateStats = (): CalculatedStats | null => {
     if (!selectedRace || !selectedAge) return null;
-    
+
     const race = races[selectedRace];
     const ageIndex = selectedAge - 10; // Convert age to array index (10 -> 0, 11 -> 1, etc.)
     const ageGrowth = race.ageGrowth[ageIndex];
-    
+
     // Calculate initial stats
     const initialStats = { ...race.baseStats };
-    
+
     return {
       initialStats,
       ageGrowth
@@ -194,7 +194,7 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
   const handleCreateCharacter = (): void => {
     const stats = calculateStats();
     if (!stats) return;
-    
+
     // Update player with race and age information
     actions.updatePlayer({
       race: selectedRace,
@@ -208,10 +208,10 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
       },
       ageGrowth: stats.ageGrowth
     });
-    
+
     // Save the game
     actions.saveGame(state.currentSlot || 1);
-    
+
     // Proceed to main game
     onCharacterCreated();
   };
@@ -221,42 +221,42 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
   return (
     <div className="scene race-scene" style={{ backgroundColor: '#ffffff', padding: '20px' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Choose Your Race and Age</h2>
-      
+
       {/* Race Selection */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '20px' }}>
-        <RaceButton 
-          race="HUMAN" 
-          isSelected={selectedRace === "HUMAN"} 
-          onClick={() => handleRaceSelect("HUMAN")} 
+        <RaceButton
+          race="HUMAN"
+          isSelected={selectedRace === "HUMAN"}
+          onClick={() => handleRaceSelect("HUMAN")}
         />
-        <RaceButton 
-          race="ELF" 
-          isSelected={selectedRace === "ELF"} 
-          onClick={() => handleRaceSelect("ELF")} 
+        <RaceButton
+          race="ELF"
+          isSelected={selectedRace === "ELF"}
+          onClick={() => handleRaceSelect("ELF")}
         />
-        <RaceButton 
-          race="DWARF" 
-          isSelected={selectedRace === "DWARF"} 
-          onClick={() => handleRaceSelect("DWARF")} 
+        <RaceButton
+          race="DWARF"
+          isSelected={selectedRace === "DWARF"}
+          onClick={() => handleRaceSelect("DWARF")}
         />
-        <RaceButton 
-          race="GIANT" 
-          isSelected={selectedRace === "GIANT"} 
-          onClick={() => handleRaceSelect("GIANT")} 
+        <RaceButton
+          race="GIANT"
+          isSelected={selectedRace === "GIANT"}
+          onClick={() => handleRaceSelect("GIANT")}
         />
-        <RaceButton 
-          race="UNDEAD" 
-          isSelected={selectedRace === "UNDEAD"} 
-          onClick={() => handleRaceSelect("UNDEAD")} 
+        <RaceButton
+          race="UNDEAD"
+          isSelected={selectedRace === "UNDEAD"}
+          onClick={() => handleRaceSelect("UNDEAD")}
         />
       </div>
-      
+
       {/* Age Selection */}
       {showAgePanel && (
-        <div 
-          style={{ 
-            position: 'absolute', 
-            top: '200px', 
+        <div
+          style={{
+            position: 'absolute',
+            top: '200px',
             left: '380px',
             display: 'flex',
             flexWrap: 'wrap',
@@ -264,22 +264,22 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
           }}
         >
           {[10, 11, 12, 13, 14, 15, 16, 17].map(age => (
-            <AgeButton 
+            <AgeButton
               key={age}
-              age={age} 
-              isSelected={selectedAge === age} 
-              onClick={() => handleAgeSelect(age)} 
+              age={age}
+              isSelected={selectedAge === age}
+              onClick={() => handleAgeSelect(age)}
             />
           ))}
         </div>
       )}
-      
+
       {/* Info Panel */}
       {showInfoPanel && stats && (
-        <div 
-          style={{ 
-            position: 'absolute', 
-            top: '150px', 
+        <div
+          style={{
+            position: 'absolute',
+            top: '150px',
             left: '380px',
             width: '400px',
             backgroundColor: '#f0f0f0',

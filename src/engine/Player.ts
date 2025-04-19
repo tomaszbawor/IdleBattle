@@ -125,35 +125,35 @@ class Player {
   levelUp(): number {
     this.level++;
     this.expToNextLevel = this.calculateExpToNextLevel();
-    
+
     // Increase stats based on age growth (1/4 of age growth per level)
     this.stats.str += Math.floor(this.ageGrowth.str / 4);
     this.stats.dex += Math.floor(this.ageGrowth.dex / 4);
     this.stats.int += Math.floor(this.ageGrowth.int / 4);
     this.stats.will += Math.floor(this.ageGrowth.will / 4);
     this.stats.luck += Math.floor(this.ageGrowth.luck / 4);
-    
+
     // Increase max HP and MP
     this.maxHp += 10 + Math.floor(this.stats.will / 2);
     this.maxMp += 5 + Math.floor(this.stats.int / 2);
-    
+
     // Restore HP and MP
     this.hp = this.maxHp;
     this.mp = this.maxMp;
-    
+
     // Recalculate derived stats
     this.protection = this.calculateProtection();
     this.defence = this.calculateDefence();
     this.attack = this.calculateAttack();
     this.crit = this.calculateCrit();
-    
+
     return this.level;
   }
 
   // Calculate protection from stats and equipment
   calculateProtection(): number {
     let protection = Math.floor(this.stats.will / 5);
-    
+
     // Add equipment bonuses
     if (this.equipment.armor) {
       protection += this.equipment.armor.protection || 0;
@@ -164,14 +164,14 @@ class Player {
     if (this.equipment.boots) {
       protection += this.equipment.boots.protection || 0;
     }
-    
+
     return protection;
   }
 
   // Calculate defence from stats and equipment
   calculateDefence(): number {
     let defence = Math.floor(this.stats.will / 2);
-    
+
     // Add equipment bonuses
     if (this.equipment.armor) {
       defence += this.equipment.armor.defence || 0;
@@ -182,26 +182,26 @@ class Player {
     if (this.equipment.boots) {
       defence += this.equipment.boots.defence || 0;
     }
-    
+
     return defence;
   }
 
   // Calculate attack from stats and equipment
   calculateAttack(): number {
     let attack = this.stats.str;
-    
+
     // Add equipment bonuses
     if (this.equipment.weapon) {
       attack += this.equipment.weapon.attack || 0;
     }
-    
+
     return attack;
   }
 
   // Calculate critical hit chance from stats and equipment
   calculateCrit(): number {
     let crit = Math.floor(this.stats.luck / 2);
-    
+
     // Add equipment bonuses
     if (this.equipment.weapon) {
       crit += this.equipment.weapon.crit || 0;
@@ -212,57 +212,57 @@ class Player {
     if (this.equipment.accessory2) {
       crit += this.equipment.accessory2.crit || 0;
     }
-    
+
     return crit;
   }
 
   // Equip an item
   equip(item: any): boolean {
     if (!item || !item.type) return false;
-    
+
     // Add current equipment to inventory if it exists
     if (this.equipment[item.slot]) {
       this.inventory.push(this.equipment[item.slot]);
     }
-    
+
     // Equip the new item
     this.equipment[item.slot] = item;
-    
+
     // Remove the item from inventory
     this.inventory = this.inventory.filter(i => i.id !== item.id);
-    
+
     // Recalculate stats
     this.protection = this.calculateProtection();
     this.defence = this.calculateDefence();
     this.attack = this.calculateAttack();
     this.crit = this.calculateCrit();
-    
+
     return true;
   }
 
   // Unequip an item
   unequip(slot: string): boolean {
     if (!this.equipment[slot]) return false;
-    
+
     // Add the item to inventory
     this.inventory.push(this.equipment[slot]);
-    
+
     // Remove the item from equipment
     this.equipment[slot] = null;
-    
+
     // Recalculate stats
     this.protection = this.calculateProtection();
     this.defence = this.calculateDefence();
     this.attack = this.calculateAttack();
     this.crit = this.calculateCrit();
-    
+
     return true;
   }
 
   // Add an item to inventory
   addItem(item: any): boolean {
     if (!item) return false;
-    
+
     this.inventory.push(item);
     return true;
   }
@@ -277,7 +277,7 @@ class Player {
   // Learn a new skill
   learnSkill(skillId: string): boolean {
     if (this.skills.includes(skillId)) return false;
-    
+
     this.skills.push(skillId);
     return true;
   }

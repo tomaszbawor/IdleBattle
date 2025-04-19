@@ -14,10 +14,9 @@ const BeginScene: React.FC<BeginSceneProps> = ({ onPlay }) => {
   return (
     <div className="scene begin-scene bg-white">
       {/* Game Title */}
-      <div 
-        className="absolute top-[10px] left-[-20px] scale-[1.8] text-3xl font-bold text-primary"
+      <div
       >
-        Battle Without End
+        Idle Battle
       </div>
 
       {/* Play Button */}
@@ -32,21 +31,21 @@ const BeginScene: React.FC<BeginSceneProps> = ({ onPlay }) => {
 
       {/* Social Media Buttons */}
       <div className="absolute bottom-[60px] right-[150px] flex gap-5">
-        <SocialButton 
-          platform="facebook" 
-          url="https://www.facebook.com/pages/Crit-Game/492086344181628" 
+        <SocialButton
+          platform="facebook"
+          url="https://www.facebook.com/pages/Crit-Game/492086344181628"
         />
-        <SocialButton 
-          platform="twitter" 
-          url="https://twitter.com/jyl111" 
+        <SocialButton
+          platform="twitter"
+          url="https://twitter.com/jyl111"
         />
-        <SocialButton 
-          platform="weibo" 
-          url="http://www.weibo.com/2162569391/" 
+        <SocialButton
+          platform="weibo"
+          url="http://www.weibo.com/2162569391/"
         />
-        <SocialButton 
-          platform="kongregate" 
-          url="http://www.kongregate.com/games/CritGame/battle-without-end" 
+        <SocialButton
+          platform="kongregate"
+          url="http://www.kongregate.com/games/CritGame/battle-without-end"
         />
       </div>
     </div>

@@ -1,11 +1,8 @@
+import Battle from '@/engine/Battle';
+import Monster from '@/engine/monsters/Monster';
+import Pet from '@/engine/pets/Pet';
+import Player from '@/engine/Player';
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import Player from '../data/Player';
-import Battle from '../data/Battle';
-import Monster from '../data/monsters/Monster';
-import Pet from '../data/pets/Pet';
-import { getRandomMonster } from '../data/monsters/MonsterData';
-import { getRandomPet } from '../data/pets/PetData';
-import { getRandomItem } from '../data/items/ItemData';
 
 // Define types for state
 interface GameState {
@@ -204,27 +201,27 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
     case ActionType.ADD_ITEM:
       return { ...state, inventory: [...state.inventory, action.payload] };
     case ActionType.REMOVE_ITEM:
-      return { 
-        ...state, 
-        inventory: state.inventory.filter(item => item.id !== action.payload) 
+      return {
+        ...state,
+        inventory: state.inventory.filter(item => item.id !== action.payload)
       };
     case ActionType.UPDATE_MONEY:
       return { ...state, money: state.money + action.payload };
     case ActionType.TOGGLE_SOUND:
-      return { 
-        ...state, 
-        sound: { 
-          ...state.sound, 
-          enabled: !state.sound.enabled 
-        } 
+      return {
+        ...state,
+        sound: {
+          ...state.sound,
+          enabled: !state.sound.enabled
+        }
       };
     case ActionType.SET_TOGGLE:
-      return { 
-        ...state, 
-        toggles: { 
-          ...state.toggles, 
-          [action.payload.name]: action.payload.value 
-        } 
+      return {
+        ...state,
+        toggles: {
+          ...state.toggles,
+          [action.payload.name]: action.payload.value
+        }
       };
     case ActionType.SAVE_GAME: {
       // Save game to localStorage
@@ -347,9 +344,9 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       dispatch({ type: ActionType.UPDATE_MONEY, payload: amount });
     },
     toggleSound: () => dispatch({ type: ActionType.TOGGLE_SOUND }),
-    setToggle: (name: string, value: boolean) => dispatch({ 
-      type: ActionType.SET_TOGGLE, 
-      payload: { name, value } 
+    setToggle: (name: string, value: boolean) => dispatch({
+      type: ActionType.SET_TOGGLE,
+      payload: { name, value }
     }),
     saveGame: (slot: number) => dispatch({ type: ActionType.SAVE_GAME, payload: { slot } }),
     loadGame: (slot: number) => dispatch({ type: ActionType.LOAD_GAME, payload: { slot } }),

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../../context/GameContext';
-import { getAllMaps } from '../../../data/maps/MapData';
 import MapCell from './MapCell';
+import { getAllMaps } from '@/engine/maps/MapData';
 
 // Reuse the MapData interface from MapCell.tsx
 interface MapData {
@@ -22,22 +22,22 @@ interface MapPanelProps {
 const MapPanel: React.FC<MapPanelProps> = ({ onClose }) => {
   const { state, actions } = useGame();
   const maps = getAllMaps();
-  
+
   const handleSelectMap = (map: MapData): void => {
     // Update the current map in the game state
     actions.setMap(map);
-    
+
     // Reset battle if there's an active one
     if (state.battle) {
       actions.startBattle(state.player?.level || 1, false);
     }
-    
+
     // Close the map panel
     onClose();
   };
-  
+
   return (
-    <div 
+    <div
       className="map-panel"
       style={{
         position: 'absolute',
@@ -55,7 +55,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ onClose }) => {
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h2 style={{ margin: 0 }}>World Map</h2>
-        <button 
+        <button
           className="button"
           onClick={onClose}
           style={{ padding: '5px 10px' }}
@@ -63,8 +63,8 @@ const MapPanel: React.FC<MapPanelProps> = ({ onClose }) => {
           Close
         </button>
       </div>
-      
-      <div 
+
+      <div
         className="map-container"
         style={{
           position: 'relative',
@@ -76,7 +76,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ onClose }) => {
         }}
       >
         {/* Map background - could be an image in a real implementation */}
-        <div 
+        <div
           style={{
             position: 'absolute',
             top: 0,
@@ -86,19 +86,19 @@ const MapPanel: React.FC<MapPanelProps> = ({ onClose }) => {
             backgroundColor: '#d0d0d0'
           }}
         />
-        
+
         {/* Map cells */}
         {maps.map((map: MapData) => (
-          <MapCell 
-            key={map.id} 
-            map={map} 
-            onSelect={handleSelectMap} 
+          <MapCell
+            key={map.id}
+            map={map}
+            onSelect={handleSelectMap}
           />
         ))}
-        
+
         {/* Current location indicator */}
         {state.map && (
-          <div 
+          <div
             style={{
               position: 'absolute',
               left: `${state.map.x + 20}px`,
@@ -112,7 +112,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ onClose }) => {
           />
         )}
       </div>
-      
+
       <div style={{ marginTop: '20px', fontSize: '14px' }}>
         <p>Click on a location to travel there. Locked locations require higher player level.</p>
         <p>Current location: {state.map ? state.map.name : 'None'}</p>
