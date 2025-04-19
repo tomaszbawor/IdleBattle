@@ -8,6 +8,7 @@ interface PanelProps {
   title?: string;
   children: React.ReactNode;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 interface StatBarProps {
@@ -22,6 +23,7 @@ interface ButtonProps {
   onClick: () => void;
   style?: React.CSSProperties;
   disabled?: boolean;
+  className?: string;
 }
 
 interface Skill {
@@ -34,18 +36,13 @@ interface Item {
 }
 
 // UI Components
-const Panel: React.FC<PanelProps> = ({ title, children, style }) => {
+const Panel: React.FC<PanelProps> = ({ title, children, style, className }) => {
   return (
     <div
-      style={{
-        border: '2px solid #74748c',
-        borderRadius: '5px',
-        padding: '10px',
-        backgroundColor: '#f0f0f0',
-        ...style
-      }}
+      className={`border-2 border-[#74748c] rounded-md p-2.5 bg-[#f0f0f0] ${className || ''}`}
+      style={style}
     >
-      {title && <h3 style={{ margin: '0 0 10px 0', textAlign: 'center' }}>{title}</h3>}
+      {title && <h3 className="m-0 mb-2.5 text-center">{title}</h3>}
       {children}
     </div>
   );
@@ -55,18 +52,17 @@ const StatBar: React.FC<StatBarProps> = ({ label, current, max, color }) => {
   const percentage = (current / max) * 100;
 
   return (
-    <div style={{ marginBottom: '5px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+    <div className="mb-1.5">
+      <div className="flex justify-between mb-0.5">
         <span>{label}</span>
         <span>{current}/{max}</span>
       </div>
-      <div style={{ width: '100%', height: '15px', backgroundColor: '#ddd', borderRadius: '3px', overflow: 'hidden' }}>
+      <div className="w-full h-[15px] bg-[#ddd] rounded overflow-hidden">
         <div
+          className="h-full transition-width duration-300 ease-in-out"
           style={{
             width: `${percentage}%`,
-            height: '100%',
-            backgroundColor: color,
-            transition: 'width 0.3s ease-in-out'
+            backgroundColor: color
           }}
         />
       </div>
@@ -74,19 +70,13 @@ const StatBar: React.FC<StatBarProps> = ({ label, current, max, color }) => {
   );
 };
 
-const Button: React.FC<ButtonProps> = ({ text, onClick, style, disabled }) => {
+const Button: React.FC<ButtonProps> = ({ text, onClick, style, disabled, className }) => {
   return (
     <button
-      className="button"
+      className={`px-2.5 py-1.5 m-1.5 ${disabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer'} ${className || ''}`}
       onClick={onClick}
       disabled={disabled}
-      style={{
-        padding: '5px 10px',
-        margin: '5px',
-        opacity: disabled ? 0.5 : 1,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        ...style
-      }}
+      style={style}
     >
       {text}
     </button>
@@ -157,11 +147,11 @@ const MainScene: React.FC = () => {
   };
 
   return (
-    <div className="scene main-scene" style={{ backgroundColor: '#c0c0c0', padding: '10px' }}>
+    <div className="scene main-scene bg-[#c0c0c0] p-2.5 relative">
       {/* Player Info Panel */}
       <Panel
         title="Player"
-        style={{ position: 'absolute', top: '10px', left: '10px', width: '380px' }}
+        className="absolute top-2.5 left-2.5 w-[380px]"
       >
         <StatBar
           label="HP"
@@ -175,7 +165,7 @@ const MainScene: React.FC = () => {
           max={state.player?.maxMp || 50}
           color="#4a60d7"
         />
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+        <div className="flex justify-between mt-2.5">
           <div>
             <div>Level: {state.player?.level || 1}</div>
             <div>Race: {state.player?.race || 'Human'}</div>
@@ -195,7 +185,7 @@ const MainScene: React.FC = () => {
       {/* Monster Info Panel */}
       <Panel
         title="Monster"
-        style={{ position: 'absolute', top: '10px', left: '400px', width: '180px' }}
+        className="absolute top-2.5 left-[400px] w-[180px]"
       >
         {state.battle?.monster ? (
           <>
@@ -205,20 +195,20 @@ const MainScene: React.FC = () => {
               max={state.battle.monster.hp}
               color="#ff4040"
             />
-            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+            <div className="text-center mt-2.5">
               <div>{state.battle.monster.name}</div>
               <div>Level {state.battle.monster.level}</div>
             </div>
           </>
         ) : (
-          <div style={{ textAlign: 'center' }}>No monster</div>
+          <div className="text-center">No monster</div>
         )}
       </Panel>
 
       {/* Pet Info Panel */}
       <Panel
         title="Pet"
-        style={{ position: 'absolute', top: '150px', left: '400px', width: '180px' }}
+        className="absolute top-[150px] left-[400px] w-[180px]"
       >
         {state.pet ? (
           <>
@@ -234,22 +224,22 @@ const MainScene: React.FC = () => {
               max={state.pet.maxMp}
               color="#4a60d7"
             />
-            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+            <div className="text-center mt-2.5">
               <div>{state.pet.name}</div>
               <div>Level {state.pet.level}</div>
             </div>
           </>
         ) : (
-          <div style={{ textAlign: 'center' }}>No pet</div>
+          <div className="text-center">No pet</div>
         )}
       </Panel>
 
       {/* Battle Skills Panel */}
       <Panel
         title="Battle Skills"
-        style={{ position: 'absolute', top: '235px', left: '415px', width: '165px' }}
+        className="absolute top-[235px] left-[415px] w-[165px]"
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div className="flex flex-wrap justify-center">
           <Button
             text="Attack"
             onClick={handleAttack}
@@ -264,11 +254,11 @@ const MainScene: React.FC = () => {
             />
           ))}
         </div>
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+        <div className="text-center mt-2.5">
           <Button
             text={autoMode ? "Manual Mode" : "Auto Mode"}
             onClick={toggleAutoMode}
-            style={{ backgroundColor: autoMode ? '#ff4040' : '#4a60d7' }}
+            className={autoMode ? "bg-[#ff4040]" : "bg-[#4a60d7]"}
           />
         </div>
       </Panel>
@@ -276,11 +266,11 @@ const MainScene: React.FC = () => {
       {/* Info Panel */}
       <Panel
         title="Battle Log"
-        style={{ position: 'absolute', top: '235px', left: '10px', width: '380px', height: '150px', overflow: 'auto' }}
+        className="absolute top-[235px] left-2.5 w-[380px] h-[150px] overflow-auto"
       >
         <div>
           {getBattleLog().map((log, index) => (
-            <div key={index} style={{ marginBottom: '5px' }}>{log}</div>
+            <div key={index} className="mb-1.5">{log}</div>
           ))}
         </div>
       </Panel>
@@ -288,24 +278,13 @@ const MainScene: React.FC = () => {
       {/* Loot Panel */}
       <Panel
         title="Loot"
-        style={{ position: 'absolute', top: '405px', left: '415px', width: '165px', height: '150px' }}
+        className="absolute top-[405px] left-[415px] w-[165px] h-[150px]"
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div className="flex flex-wrap justify-center">
           {state.inventory.slice(0, 4).map((item: Item, index: number) => (
             <div
               key={index}
-              style={{
-                width: '40px',
-                height: '40px',
-                margin: '5px',
-                backgroundColor: '#ddd',
-                border: '1px solid #999',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontSize: '10px',
-                cursor: 'pointer'
-              }}
+              className="w-[40px] h-[40px] m-1.5 bg-[#ddd] border border-[#999] flex justify-center items-center text-[10px] cursor-pointer"
               title={item.name}
               onClick={() => actions.equipItem(item)}
             >
@@ -315,32 +294,26 @@ const MainScene: React.FC = () => {
           {Array(4 - Math.min(state.inventory.length, 4)).fill(0).map((_, index) => (
             <div
               key={`empty-${index}`}
-              style={{
-                width: '40px',
-                height: '40px',
-                margin: '5px',
-                backgroundColor: '#ddd',
-                border: '1px solid #999'
-              }}
+              className="w-[40px] h-[40px] m-1.5 bg-[#ddd] border border-[#999]"
             />
           ))}
         </div>
       </Panel>
 
       {/* Other Panel */}
-      <Panel>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Button text="Shop" onClick={() => { }} style={{ width: '100px' }} />
-          <Button text="Inventory" onClick={() => { }} style={{ width: '100px' }} />
+      <Panel className="absolute top-[405px] left-2.5 w-[165px]">
+        <div className="flex flex-col items-center">
+          <Button text="Shop" onClick={() => { }} className="w-[100px]" />
+          <Button text="Inventory" onClick={() => { }} className="w-[100px]" />
           <Button
             text="Map"
-            style={{ width: '100px' }}
+            className="w-[100px]"
             onClick={() => setShowMapPanel(true)}
           />
-          <Button text="Help" onClick={() => { }} style={{ width: '100px' }} />
+          <Button text="Help" onClick={() => { }} className="w-[100px]" />
           <Button
             text="Save"
-            style={{ width: '100px' }}
+            className="w-[100px]"
             onClick={() => actions.saveGame(1)}
           />
         </div>
