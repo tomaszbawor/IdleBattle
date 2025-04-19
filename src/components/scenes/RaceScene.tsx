@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { useGame } from '../../context/GameContext';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 // Define types for stats and race data
 interface Stats {
@@ -19,18 +20,6 @@ interface Race {
 
 interface Races {
   [key: string]: Race;
-}
-
-interface RaceButtonProps {
-  race: string;
-  isSelected: boolean;
-  onClick: () => void;
-}
-
-interface AgeButtonProps {
-  age: number;
-  isSelected: boolean;
-  onClick: () => void;
 }
 
 interface RaceSceneProps {
@@ -116,40 +105,6 @@ const races: Races = {
   }
 };
 
-const RaceButton: React.FC<RaceButtonProps> = ({ race, isSelected, onClick }) => {
-  return (
-    <button
-      className={`button ${isSelected ? 'selected-button' : ''}`}
-      onClick={onClick}
-      style={{
-        width: '200px',
-        height: '50px',
-        margin: '5px',
-        backgroundColor: isSelected ? '#2a40b7' : '#4a60d7'
-      }}
-    >
-      {races[race].name}
-    </button>
-  );
-};
-
-const AgeButton: React.FC<AgeButtonProps> = ({ age, isSelected, onClick }) => {
-  return (
-    <button
-      className={`button ${isSelected ? 'selected-button' : ''}`}
-      onClick={onClick}
-      style={{
-        width: '40px',
-        height: '40px',
-        margin: '5px',
-        backgroundColor: isSelected ? '#2a40b7' : '#4a60d7'
-      }}
-    >
-      {age}
-    </button>
-  );
-};
-
 const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
   const { state, actions } = useGame();
   const [selectedRace, setSelectedRace] = useState<string | null>(null);
@@ -160,19 +115,11 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
   const handleRaceSelect = (race: string): void => {
     setSelectedRace(race);
     setShowAgePanel(true);
-    if (!showAgePanel) {
-      // Simulate fade-in effect
-      setTimeout(() => setShowAgePanel(true), 10);
-    }
   };
 
   const handleAgeSelect = (age: number): void => {
     setSelectedAge(age);
     setShowInfoPanel(true);
-    if (!showInfoPanel) {
-      // Simulate fade-in effect
-      setTimeout(() => setShowInfoPanel(true), 10);
-    }
   };
 
   const calculateStats = (): CalculatedStats | null => {
@@ -219,99 +166,128 @@ const RaceScene: React.FC<RaceSceneProps> = ({ onCharacterCreated }) => {
   const stats = calculateStats();
 
   return (
-    <div className="scene race-scene" style={{ backgroundColor: '#ffffff', padding: '20px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Choose Your Race and Age</h2>
+    <div className="scene race-scene bg-white p-6 min-h-screen">
+      <h2 className="text-3xl font-bold text-center mb-8">Choose Your Race and Age</h2>
 
-      {/* Race Selection */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '20px' }}>
-        <RaceButton
-          race="HUMAN"
-          isSelected={selectedRace === "HUMAN"}
-          onClick={() => handleRaceSelect("HUMAN")}
-        />
-        <RaceButton
-          race="ELF"
-          isSelected={selectedRace === "ELF"}
-          onClick={() => handleRaceSelect("ELF")}
-        />
-        <RaceButton
-          race="DWARF"
-          isSelected={selectedRace === "DWARF"}
-          onClick={() => handleRaceSelect("DWARF")}
-        />
-        <RaceButton
-          race="GIANT"
-          isSelected={selectedRace === "GIANT"}
-          onClick={() => handleRaceSelect("GIANT")}
-        />
-        <RaceButton
-          race="UNDEAD"
-          isSelected={selectedRace === "UNDEAD"}
-          onClick={() => handleRaceSelect("UNDEAD")}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Race Selection */}
+        <div className="space-y-3">
+          <h3 className="text-xl font-semibold mb-4">Select Race</h3>
+          <div className="flex flex-col space-y-2">
+            {Object.keys(races).map((race) => (
+              <Button
+                key={race}
+                variant={selectedRace === race ? "default" : "outline"}
+                className={`py-3 justify-start text-left ${selectedRace === race ? 'bg-primary text-primary-foreground' : ''}`}
+                onClick={() => handleRaceSelect(race)}
+              >
+                {races[race].name}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          {/* Age Selection */}
+          {showAgePanel && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="text-xl">Select Age</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-4 gap-2">
+                  {[10, 11, 12, 13, 14, 15, 16, 17].map(age => (
+                    <Button
+                      key={age}
+                      variant={selectedAge === age ? "default" : "outline"}
+                      className={`h-12 w-12 ${selectedAge === age ? 'bg-primary text-primary-foreground' : ''}`}
+                      onClick={() => handleAgeSelect(age)}
+                    >
+                      {age}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Info Panel */}
+          {showInfoPanel && stats && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Character Stats</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="font-semibold">
+                  AGE: {selectedAge}
+                </div>
+                <div>
+                  <span className="font-semibold">Initial Stats: </span>
+                  <div className="grid grid-cols-5 gap-2 mt-2">
+                    <div className="text-center">
+                      <div className="font-medium">Str</div>
+                      <div>{stats.initialStats.str}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Dex</div>
+                      <div>{stats.initialStats.dex}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Int</div>
+                      <div>{stats.initialStats.int}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Will</div>
+                      <div>{stats.initialStats.will}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Luck</div>
+                      <div>{stats.initialStats.luck}</div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-semibold">Age Growth: </span>
+                  <div className="grid grid-cols-5 gap-2 mt-2">
+                    <div className="text-center">
+                      <div className="font-medium">Str+</div>
+                      <div>{stats.ageGrowth.str}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Dex+</div>
+                      <div>{stats.ageGrowth.dex}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Int+</div>
+                      <div>{stats.ageGrowth.int}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Will+</div>
+                      <div>{stats.ageGrowth.will}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">Luck+</div>
+                      <div>{stats.ageGrowth.luck}</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  (Level-up Growth: 1/4 of Age Growth)
+                </div>
+                <div className="flex justify-center mt-6">
+                  <Button 
+                    variant="flicker" 
+                    onClick={handleCreateCharacter} 
+                    className="px-8 py-2"
+                  >
+                    Create Character
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
-
-      {/* Age Selection */}
-      {showAgePanel && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '200px',
-            left: '380px',
-            display: 'flex',
-            flexWrap: 'wrap',
-            width: '220px'
-          }}
-        >
-          {[10, 11, 12, 13, 14, 15, 16, 17].map(age => (
-            <AgeButton
-              key={age}
-              age={age}
-              isSelected={selectedAge === age}
-              onClick={() => handleAgeSelect(age)}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Info Panel */}
-      {showInfoPanel && stats && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '150px',
-            left: '380px',
-            width: '400px',
-            backgroundColor: '#f0f0f0',
-            padding: '10px',
-            border: '1px solid #74748c'
-          }}
-        >
-          <div style={{ marginBottom: '10px' }}>
-            <span style={{ fontWeight: 'bold' }}>AGE: {selectedAge}</span>
-          </div>
-          <div style={{ marginBottom: '10px' }}>
-            <span style={{ fontWeight: 'bold' }}>Initial Stats: </span>
-            <span>Str {stats.initialStats.str} Dex {stats.initialStats.dex} Int {stats.initialStats.int} Will {stats.initialStats.will} Luck {stats.initialStats.luck}</span>
-          </div>
-          <div style={{ marginBottom: '10px' }}>
-            <span style={{ fontWeight: 'bold' }}>Age Growth: </span>
-            <span>Str+{stats.ageGrowth.str} Dex+{stats.ageGrowth.dex} Int+{stats.ageGrowth.int} Will+{stats.ageGrowth.will} Luck+{stats.ageGrowth.luck}</span>
-          </div>
-          <div style={{ marginBottom: '10px' }}>
-            <span style={{ fontSize: '12px' }}>(Level-up Growth: 1/4 of Age Growth)</span>
-          </div>
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <Button 
-              variant="flicker" 
-              onClick={handleCreateCharacter} 
-              className="w-[250px] h-[50px]"
-            >
-              OK
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
