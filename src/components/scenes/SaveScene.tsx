@@ -77,24 +77,24 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
   if (slotData) {
     // Render existing save slot
     return (
-      <div className="border-2 border-slate-500 w-[600px] h-[100px] relative my-2.5 p-2.5">
-        <div className="mb-2.5">
-          <span className="font-bold">NAME: </span>
-          <span>{slotData.player.name}</span>
+      <div className="border-2 border-slate-500 rounded-lg bg-slate-50 shadow-md w-[600px] h-[120px] relative my-4 p-4 hover:border-blue-500 transition-colors duration-200">
+        <div className="mb-3">
+          <span className="font-bold text-slate-700 uppercase text-sm">Name: </span>
+          <span className="text-slate-900 font-medium">{slotData.player.name}</span>
         </div>
-        <div>
+        <div className="text-slate-600 text-sm">
           <span>Saved: {slotData.time}</span>
         </div>
-        <div className="absolute right-2.5 top-2.5">
+        <div className="absolute right-4 top-4">
           <Button 
             variant="flicker" 
             onClick={handleLoadGame} 
-            className="w-[100px] h-[40px]"
+            className="w-[100px] h-[40px] font-bold shadow-sm"
           >
             LOAD
           </Button>
         </div>
-        <div className="absolute right-2.5 bottom-2.5">
+        <div className="absolute right-4 bottom-4">
           <Button 
             variant="destructive"
             onClick={() => {
@@ -103,7 +103,7 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
                 setSlotData(null);
               }
             }}
-            className="w-[50px] h-[20px] text-xs"
+            className="w-[60px] h-[24px] text-xs font-medium"
           >
             DELETE
           </Button>
@@ -114,9 +114,9 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
 
   // Render new save slot
   return (
-    <div className="border-2 border-slate-500 w-[600px] h-[100px] relative my-2.5 p-2.5">
-      <div className="mb-2.5">
-        <span className="font-bold">NAME: </span>
+    <div className="border-2 border-slate-500 rounded-lg bg-slate-50 shadow-md w-[600px] h-auto min-h-[160px] relative my-4 p-4 hover:border-blue-500 transition-colors duration-200">
+      <div className="mb-3 flex items-center">
+        <span className="font-bold text-slate-700 uppercase text-sm w-24">Name: </span>
         <input 
           type="text" 
           value={name} 
@@ -124,11 +124,12 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
             setName(e.target.value);
             handleInputChange();
           }} 
-          className="border border-slate-500"
+          className="border border-slate-300 rounded px-2 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          placeholder="Enter character name"
         />
       </div>
-      <div className="mb-2.5">
-        <span className="font-bold">Password: </span>
+      <div className="mb-3 flex items-center">
+        <span className="font-bold text-slate-700 uppercase text-sm w-24">Password: </span>
         <input 
           type="password" 
           value={password} 
@@ -136,11 +137,12 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
             setPassword(e.target.value);
             handleInputChange();
           }} 
-          className="border border-slate-500"
+          className="border border-slate-300 rounded px-2 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          placeholder="Enter password"
         />
       </div>
-      <div className="mb-2.5">
-        <span className="font-bold">Confirm: </span>
+      <div className="mb-3 flex items-center">
+        <span className="font-bold text-slate-700 uppercase text-sm w-24">Confirm: </span>
         <input 
           type="password" 
           value={confirmPassword} 
@@ -148,22 +150,25 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
             setConfirmPassword(e.target.value);
             handleInputChange();
           }} 
-          className="border border-slate-500"
+          className="border border-slate-300 rounded px-2 py-1 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          placeholder="Confirm password"
         />
       </div>
-      <div className="absolute right-2.5 top-2.5">
+      <div className="absolute right-4 top-4">
         {showNewButton && (
           <Button 
             variant="flicker" 
             onClick={handleNewGame} 
-            className="w-[100px] h-[50px]"
+            className="w-[100px] h-[50px] font-bold shadow-sm"
           >
             NEW
           </Button>
         )}
       </div>
-      <div className="absolute right-2.5 bottom-2.5">
-        <span>{warning}</span>
+      <div className="absolute right-4 bottom-4">
+        <span className={`text-sm ${warning === 'OK' ? 'text-green-600 font-medium' : 'text-red-500 font-medium'}`}>
+          {warning}
+        </span>
       </div>
     </div>
   );
@@ -171,10 +176,12 @@ const SaveSlot: React.FC<SaveSlotProps> = ({ slotNumber, onNewGame, onLoadGame }
 
 const SaveScene: React.FC<SaveSceneProps> = ({ onNewGame, onLoadGame }) => {
   return (
-    <div className="scene save-scene bg-white p-5">
-      <h2 className="text-center mb-5 text-2xl font-bold">Select or Create a Character</h2>
+    <div className="scene save-scene bg-gradient-to-b from-white to-slate-100 p-8 min-h-screen">
+      <h2 className="text-center mb-8 text-3xl font-bold text-slate-800 drop-shadow-sm">
+        Select or Create a Character
+      </h2>
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center gap-2 max-w-3xl mx-auto">
         <SaveSlot slotNumber={1} onNewGame={onNewGame} onLoadGame={onLoadGame} />
         <SaveSlot slotNumber={2} onNewGame={onNewGame} onLoadGame={onLoadGame} />
         <SaveSlot slotNumber={3} onNewGame={onNewGame} onLoadGame={onLoadGame} />
