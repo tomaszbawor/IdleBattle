@@ -5,7 +5,7 @@ import Pet from '../pets/Pet';
 import { getSkillById } from '../skills/SkillData';
 
 // Mock dependencies
-vi.mock('../../monsters/MonsterData', () => ({
+vi.mock('../monsters/MonsterData', () => ({
   getRandomMonster: vi.fn().mockReturnValue({
     id: 'goblin',
     name: 'Goblin',
@@ -33,7 +33,7 @@ vi.mock('../../monsters/MonsterData', () => ({
   })
 }));
 
-vi.mock('../../skills/SkillData', () => ({
+vi.mock('../skills/SkillData', () => ({
   getSkillById: vi.fn().mockImplementation((skillId) => {
     if (skillId === 'fireball') {
       return {

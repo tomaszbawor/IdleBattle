@@ -269,6 +269,12 @@ class Battle {
       this.pet = null; // Remove the pet from battle
     }
 
+    // Check if player's HP is below 0
+    if (target === this.player && target.hp <= 0) {
+      this.addToBattleLog(`You have been defeated!`);
+      this.endBattle(false);
+    }
+
     // Add to battle log
     if (isCrit) {
       this.addToBattleLog(`${this.monster.name} lands a critical hit on ${targetName} for ${damage} damage!`);

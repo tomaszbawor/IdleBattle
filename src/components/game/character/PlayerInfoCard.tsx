@@ -44,12 +44,10 @@ const StatBar: React.FC<StatBarProps> = ({
         value={percentage}
         className="h-3"
         style={{ backgroundColor: 'rgb(221, 221, 221)' }}
-      >
-        <div
-          className="h-full transition-all duration-300 ease-in-out"
-          style={{ backgroundColor: color }}
-        />
-      </Progress>
+        aria-valuenow={percentage}
+        role="progressbar"
+        color={color}
+      />
     </div>
   );
 };
